@@ -67,12 +67,33 @@ module.exports = function (app) {
                         res.end(err);
                     } else res.json(arr);
                 })
+            })
+            .put(function (req, res) {
+                const project = req.params.project;
+                const body = req.body;
+                const updateId = body._id;
+                if (!updateId) return res.send("no id provided");
+                const updateDoc = {updated_on: new Date()};
+                let updated = false;
+                for (const prop in body) {
+                    if (prop !== "_id" && body.hasOwnProperty(prop) && issueProps.includes(prop)) {
+                        updated = true;
+                        updateDoc[prop] = body[prop];
+                        if (prop === "open" && body[prop] === "false") updateDoc[prop] = false;
+                    }
+                }
+                if (!updated) return res.send("no updated field sent");
+                db.collection(project)
+                    .findOneAndUpdate({
+                            _id: new ObjectId(updateId)
+                        },
+                        {$set: updateDoc},
+                        {},
+                        (err, doc) => {
+                            if (err || !doc) return res.send("could not update " + updateId);
+                            return res.send("successfully updated");
+                        })
             });
-        // .put(function (req, res) {
-        //     var project = req.params.project;
-        //
-        // })
-        //
         // .delete(function (req, res) {
         //     var project = req.params.project;
         //
