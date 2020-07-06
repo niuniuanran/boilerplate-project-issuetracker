@@ -122,10 +122,11 @@ suite('Functional Tests', function () {
             chai.request(app)
                 .get('/api/issues/test')
                 .query({
-                    "issue_title": "Test",
-                    "issue_text": "test",
+                    "open": "true",
+                    "issue_title": "Title",
+                    "issue_text": "text",
                     "created_by": "Functional Test - Every field filled in",
-                    "assigned_to": 'Chai and Mocha'
+                    "assigned_to": "Chai and Mocha"
                 })
                 .end(function (err, res) {
                     assert.equal(res.status, 200);
@@ -133,9 +134,9 @@ suite('Functional Tests', function () {
                     res.body.forEach(ele => {
                         assert.property(ele, 'open');
                         assert.property(ele, 'issue_title');
-                        assert.equal(ele.issue_title, "Test");
+                        assert.equal(ele.issue_title, "Title");
                         assert.property(ele, 'issue_text');
-                        assert.equal(ele.issue_text, "test");
+                        assert.equal(ele.issue_text, "text");
                         assert.property(ele, 'created_by');
                         assert.equal(ele.created_by, "Functional Test - Every field filled in");
                         assert.property(ele, 'assigned_to');
