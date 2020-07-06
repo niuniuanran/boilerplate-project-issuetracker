@@ -90,14 +90,23 @@ module.exports = function (app) {
                         {$set: updateDoc},
                         {},
                         (err, doc) => {
-                            if (err || !doc) return res.send("could not update " + updateId);
+                            if (err || !doc) return res.status(500).send("could not update " + updateId);
                             return res.send("successfully updated");
                         })
+            })
+            .delete(function (req, res) {
+                const project = req.params.project;
+                const deleteId = req.body._id;
+                if (!deleteId) return res.status(400).send('_id error');
+                db.collection(project)
+                    .findOneAndDelete({_id: new ObjectId(deleteId)},
+                        {},
+                        (err) => {
+                            if (err) return res.status(500).send("could not delete " + deleteId);
+                            return res.send("deleted " + deleteId);
+                        }
+                    )
             });
-        // .delete(function (req, res) {
-        //     var project = req.params.project;
-        //
-        // });
 
         //404 Not Found Middleware
         app.use(function (req, res, next) {
