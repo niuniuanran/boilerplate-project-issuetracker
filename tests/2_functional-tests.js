@@ -10,6 +10,7 @@ var chaiHttp = require('chai-http');
 var chai = require('chai');
 var assert = chai.assert;
 var app = require('../server');
+let testID;
 
 chai.use(chaiHttp);
 
@@ -27,6 +28,7 @@ suite('Functional Tests', function () {
                     status_text: 'In QA'
                 })
                 .end(function (err, res) {
+                    testID = res.body._id;
                     assert.equal(res.status, 200, "Status should be 200!");
                     assert.isTrue(res.body.open, "Issue should be open!");
                     assert.equal(res.body.issue_title, 'Title', "Title does not match!");
@@ -152,22 +154,50 @@ suite('Functional Tests', function () {
 
     });
 
-    //
-    // suite('PUT /api/issues/{project} => text', function () {
-    //
-    //     test('No body', function (done) {
-    //
-    //     });
-    //
-    //     test('One field to update', function (done) {
-    //
-    //     });
-    //
-    //     test('Multiple fields to update', function (done) {
-    //
-    //     });
-    //
-    // });
+
+    suite('PUT /api/issues/{project} => text', function () {
+
+        test('No body', function (done) {
+            chai.request(app)
+                .put('/api/issues/test')
+                .send({
+                    _id: testID,
+                }).end(function (err, res) {
+                assert.equal(res.status, 200);
+                assert.equal(res.body, 'no updated field sent');
+                done();
+            })
+        });
+
+        test('One field to update', function (done) {
+            chai.request(app)
+                .put('/api/issues/test')
+                .send({
+                    _id: testID,
+                    issue_title: "Updated Title"
+                }).end(function (err, res) {
+                assert.equal(res.status, 200);
+                assert.equal(res.body, 'successfully updated');
+                done();
+            })
+        });
+
+        test('Multiple fields to update', function (done) {
+            chai.request(app)
+                .put('/api/issues/test')
+                .send({
+                    _id: testID,
+                    open: false,
+                    issue_text: "bug fixed",
+                    assigned_to: "anran"
+                }).end(function (err, res) {
+                assert.equal(res.status, 200);
+                assert.equal(res.body, 'successfully updated');
+                done();
+            })
+        });
+
+    });
 
     // suite('DELETE /api/issues/{project} => text', function () {
     //
