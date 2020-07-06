@@ -61,6 +61,12 @@ module.exports = function (app) {
         //
         // });
 
+        //404 Not Found Middleware
+        app.use(function (req, res, next) {
+            res.status(404)
+                .type('text')
+                .send('Route Not Found');
+        });
     });
 
 };
