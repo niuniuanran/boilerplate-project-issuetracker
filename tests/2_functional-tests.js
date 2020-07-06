@@ -164,7 +164,7 @@ suite('Functional Tests', function () {
                     _id: testID,
                 }).end(function (err, res) {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'no updated field sent');
+                assert.equal(res.text, 'no updated field sent');
                 done();
             })
         });
@@ -177,7 +177,7 @@ suite('Functional Tests', function () {
                     issue_title: "Updated Title"
                 }).end(function (err, res) {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'successfully updated');
+                assert.equal(res.text, 'successfully updated');
                 done();
             })
         });
@@ -192,7 +192,7 @@ suite('Functional Tests', function () {
                     assigned_to: "anran"
                 }).end(function (err, res) {
                 assert.equal(res.status, 200);
-                assert.equal(res.body, 'successfully updated');
+                assert.equal(res.text, 'successfully updated');
                 done();
             })
         });
