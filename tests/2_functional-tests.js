@@ -42,16 +42,16 @@ suite('Functional Tests', function () {
             chai.request(app)
                 .post('/api/issues/test')
                 .send({
-                    issue_title: 'Title2',
-                    issue_text: 'text2',
-                    created_by: 'Functional Test - Every field filled in2',
+                    issue_title: 'Title',
+                    issue_text: 'text',
+                    created_by: 'Functional Test - Every field filled in',
                 })
                 .end(function (err, res) {
                     assert.equal(res.status, 200);
                     assert.isTrue(res.body.open);
-                    assert.equal(res.body.issue_title, 'Title2');
-                    assert.equal(res.body.issue_text, 'text2');
-                    assert.equal(res.body.created_by, 'Functional Test - Every field filled in2');
+                    assert.equal(res.body.issue_title, 'Title');
+                    assert.equal(res.body.issue_text, 'text');
+                    assert.equal(res.body.created_by, 'Functional Test - Every field filled in');
                     assert.equal(res.body.assigned_to, '');
                     assert.equal(res.body.status_text, '');
                     done();
@@ -62,8 +62,8 @@ suite('Functional Tests', function () {
             chai.request(app)
                 .post('/api/issues/test')
                 .send({
-                    issue_title: 'Title2',
-                    issue_text: 'text2',
+                    issue_title: 'Title',
+                    issue_text: 'text',
                 }).end(function (err, res) {
                 assert.equal(res.status, 400);
                 assert.equal(res.body.err, 'missing required field');
@@ -95,13 +95,59 @@ suite('Functional Tests', function () {
                 });
         });
 
-//         test('One filter', function (done) {
-// done();
-//         });
-//
-//         test('Multiple filters (test for multiple fields you know will be in the db for a return)', function (done) {
-// done();
-//         });
+        test('One filter', function (done) {
+            chai.request(app)
+                .get('/api/issues/test')
+                .query({open: true})
+                .end(function (err, res) {
+                    assert.equal(res.status, 200);
+                    assert.isArray(res.body);
+                    res.body.forEach(ele => {
+                        assert.property(ele, 'open');
+                        assert.isTrue(ele.open);
+                        assert.property(ele, 'issue_title');
+                        assert.property(ele, 'issue_text');
+                        assert.property(ele, 'created_on');
+                        assert.property(ele, 'updated_on');
+                        assert.property(ele, 'created_by');
+                        assert.property(ele, 'assigned_to');
+                        assert.property(ele, 'status_text');
+                        assert.property(ele, '_id');
+                    });
+                    done();
+                })
+        });
+
+        test('Multiple filters (test for multiple fields you know will be in the db for a return)', function (done) {
+            chai.request(app)
+                .get('/api/issues/test')
+                .query({
+                    "issue_title": "Test",
+                    "issue_text": "test",
+                    "created_by": "Functional Test - Every field filled in",
+                    "assigned_to": 'Chai and Mocha'
+                })
+                .end(function (err, res) {
+                    assert.equal(res.status, 200);
+                    assert.isArray(res.body);
+                    res.body.forEach(ele => {
+                        assert.property(ele, 'open');
+                        assert.property(ele, 'issue_title');
+                        assert.equal(ele.issue_title, "Test");
+                        assert.property(ele, 'issue_text');
+                        assert.equal(ele.issue_text, "test");
+                        assert.property(ele, 'created_by');
+                        assert.equal(ele.created_by, "Functional Test - Every field filled in");
+                        assert.property(ele, 'assigned_to');
+                        assert.equal(ele.assigned_to, 'Chai and Mocha');
+                        assert.property(ele, 'status_text');
+                        assert.property(ele, '_id');
+                        assert.property(ele, 'created_on');
+                        assert.property(ele, 'updated_on');
+                    });
+                    done();
+                })
+        });
 
     });
 
